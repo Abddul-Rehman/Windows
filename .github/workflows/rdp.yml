@@ -16,11 +16,6 @@ jobs:
         Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
         Expand-Archive ngrok.zip -DestinationPath ngrok_temp
 
-    - name: Update ngrok
-
-      run: |
-        .\ngrok_temp\ngrok.exe update
-
     - name: Extract ngrok
 
       run: Expand-Archive ngrok.zip
@@ -28,7 +23,12 @@ jobs:
     - name: Auth
 
       run: .\ngrok_temp\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+    
+    - name: Update ngrok
 
+      run: |
+        .\ngrok_temp\ngrok.exe update
+        
       env:
 
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
