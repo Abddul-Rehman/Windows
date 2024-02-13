@@ -23,7 +23,7 @@ jobs:
 
     - name: Extract ngrok
 
-      run: Expand-Archive ngrok.zip -DestinationPath ngrok_temp
+      run: Expand-Archive ngrok.zip
 
     - name: Auth
 
