@@ -1,30 +1,33 @@
 name: CI
 
-
 on: [push, workflow_dispatch]
-
 
 jobs:
 
   build:
 
-
     runs-on: windows-latest
-
 
     steps:
 
-    - name: Download
+    - name: Download ngrok
 
-      run: Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+      run: |
+        Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+        Expand-Archive ngrok.zip -DestinationPath ngrok_temp
 
-    - name: Extract
+    - name: Update ngrok
 
-      run: Expand-Archive ngrok.zip
+      run: |
+        .\ngrok_temp\ngrok.exe update
+
+    - name: Extract ngrok
+
+      run: Expand-Archive ngrok.zip -DestinationPath ngrok_temp
 
     - name: Auth
 
-      run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+      run: .\ngrok_temp\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
 
       env:
 
@@ -32,7 +35,7 @@ jobs:
 
     - name: Enable TS
 
-      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
 
     - run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
@@ -42,4 +45,4 @@ jobs:
 
     - name: Create Tunnel
 
-      run: .\ngrok\ngrok.exe tcp 3389
+      run: .\ngrok_temp\ngrok.exe tcp 3389
