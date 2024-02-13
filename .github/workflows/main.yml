@@ -17,7 +17,12 @@ jobs:
     - name: Download
 
       run: Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+    
+    - name: Update ngrok
 
+      run: |
+        .\ngrok_temp\ngrok.exe update
+        
     - name: Extract
 
       run: Expand-Archive ngrok.zip
@@ -39,11 +44,6 @@ jobs:
     - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
 
     - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
-    
-    - name: Update ngrok
-
-      run: |
-        .\ngrok_temp\ngrok.exe update
     
     - name: Create Tunnel
 
