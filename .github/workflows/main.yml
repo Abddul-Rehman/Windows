@@ -30,11 +30,15 @@ jobs:
     - name: Set runneradmin password
       run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
 
+    - name: Start ngrok in the background
+      run: Start-Process -FilePath .\ngrok\ngrok.exe -ArgumentList 'tcp 3389' -NoNewWindow
+
     - name: Set ngrok to auto-restart on boot
       run: |
         $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "Start-Process -NoNewWindow '.\ngrok\ngrok.exe' 'tcp 3389'"
         $trigger = New-ScheduledTaskTrigger -AtStartup
         Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "ngrokReconnect" -Description "Reconnect ngrok after restart" -User "runneradmin" -Password "P@ssw0rd!"
 
-    - name: Start ngrok and keep the session alive
-      run: .\ngrok\ngrok.exe tcp 3389
+    - name: Keep the workflow alive (indefinitely)
+      run: |
+        while ($true) { Start-Sleep -Seconds 300 }
