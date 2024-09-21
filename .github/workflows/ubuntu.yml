@@ -27,9 +27,13 @@ jobs:
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
 
-    - name: Enable RDP on Ubuntu (if required)
+    - name: Installing Desktop Environment (wait for 10 min)
       run: |
-        sudo apt-get update
+        sudo apt update
+        sudo apt install expect ubuntu-desktop -y
+
+    - name: Enable RDP on Ubuntu
+      run: |
         sudo apt-get install xrdp -y
         sudo systemctl enable xrdp
         sudo ufw allow 3389
